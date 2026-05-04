@@ -7,6 +7,3 @@
 [submodule "agenda-ucp-frontend"]
 	path = agenda-ucp-frontend
 	url = https://github.com/FelipeMiranda1025/agenda-ucp-frontend.git
-[submodule "ucp-agenda-frontend"]
-	path = ucp-agenda-frontend
-	url = https://github.com/FelipeMiranda1025/agenda-ucp-frontend.git
