@@ -1,64 +1,97 @@
-🚀 Agenda Docente UCP - Guía de Inicio Rápido
-Este proyecto es un ecosistema de microservicios que utiliza React (Frontend), Node.js (Backend) y PostgreSQL (Base de datos), todo orquestado con Docker.
+# 🚀 Agenda Docente UCP - Orquestador de Servicios
 
-📋 Requisitos Previos
-Antes de empezar, asegúrate de tener instalado:
+Este repositorio es el punto central del proyecto **Agenda Docente**. Utiliza **Git Submodules** para gestionar los repositorios independientes de Backend, Frontend y Base de Datos, y **Docker Compose** para orquestar el despliegue local.
 
-Docker Desktop (Asegúrate de que esté abierto).
+---
 
-Git.
+## 🛠️ Requisitos Previos
 
-🛠️ Configuración Inicial
-1. Estructura de carpetas
-Asegúrate de tener los repositorios organizados de la siguiente manera:
+Antes de comenzar, asegúrate de tener instalado:
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* [Git](https://git-scm.com/)
 
-Plaintext
-/agenda-docente-root
-├── docker-compose.yml
-├── agenda-ucp-backend/
-├── ucp-agenda-frontend/
-└── agenda-ucp-db/
-2. Variables de Entorno
-Ve a la carpeta agenda-ucp-backend/.
+---
 
-Crea un archivo llamado .env.
+## 📥 1. Clonación del Proyecto
 
-Copia y pega el contenido de .env.example (o pide las credenciales al administrador).
+Como este proyecto utiliza submódulos, es **CRUCIAL** clonarlo usando el parámetro `--recursive`. De lo contrario, las carpetas de los módulos aparecerán vacías.
 
-Nota: Asegúrate de que DB_HOST=db para que Docker lo reconozca.
+```powershell
+git clone --recursive [https://github.com/FelipeMiranda1025/agenda-ucp-manager.git](https://github.com/FelipeMiranda1025/agenda-ucp-manager.git)
+cd agenda-ucp-manager
+Nota: Si ya clonaste el proyecto sin el comando anterior, ejecuta:
+git submodule update --init --recursive
 
-🚀 Ejecución del Proyecto
-Abre una terminal en la carpeta raíz y ejecuta el siguiente comando:
+⚙️ 2. Configuración de Variables de Entorno (.env)
+Por seguridad, los archivos .env no se suben al repositorio. Debes crearlos manualmente siguiendo estos pasos:
+
+Backend
+Entra a agenda-ucp-backend/.
+
+Busca el archivo .env.example.
+
+Crea una copia y renómbrala a .env.
+
+Verifica que las credenciales de la base de datos coincidan con las del docker-compose.yml.
+
+Frontend
+Entra a agenda-ucp-frontend/.
+
+Repite el proceso (copiar .env.example a .env).
+
+🏗️ 3. Despliegue con Docker
+Desde la raíz del proyecto (agenda-ucp-manager), ejecuta el siguiente comando para construir y levantar todos los servicios (Base de Datos, Backend y Frontend):
 
 PowerShell
 docker compose up -d --build
-Este comando descargará las imágenes, construirá los contenedores y los pondrá a correr en segundo plano.
+Esto hará lo siguiente:
 
-🔑 Acceso y Primeros Pasos
-1. Inyectar Usuario Administrador
-Como la base de datos inicia vacía, debes ejecutar este comando una sola vez en tu terminal para crear el usuario de soporte:
+Levantará PostgreSQL en el puerto 5432.
+
+Levantará el Backend en el puerto 3000.
+
+Levantará el Frontend en el puerto 80.
+
+🔑 4. Inyección del Usuario Inicial (Soporte)
+Como la base de datos está vacía inicialmente, debes crear el usuario de soporte para poder ingresar al sistema:
+
+Identifica el nombre del contenedor del backend (usualmente agenda-ucp-backend-1).
+
+Ejecuta el comando de inyección:
 
 PowerShell
-docker exec -i agenda-ucp-db psql -U postgres -d agendadocentedb -c "INSERT INTO roles (id, nombre) VALUES (5, 'Soporte') ON CONFLICT DO NOTHING; INSERT INTO users (cc, nombre, password, id_rol) VALUES ('12345', 'Admin Soporte', '9709c065f4d1e2e176211832d2011116c4f6918805f42c23f20f324e93019d67', 5) ON CONFLICT DO NOTHING;"
-2. Entrar al Sistema
-URL: http://localhost
+docker exec -it agenda-ucp-backend-1 npm run seed:support
+(O el comando específico que definimos para crear el usuario 12345).
 
-Cédula: 12345
+🔄 5. Flujo de Trabajo con Submódulos
+Para mantener el proyecto actualizado:
 
-Contraseña: 1234Ucp*
+Para obtener cambios del equipo:
 
-🔄 Flujo de Trabajo (Día a Día)
-Si haces cambios en el código o bajas actualizaciones de Git, usa:
+PowerShell
+git pull origin main
+git submodule update --remote --merge
+Para subir cambios:
+Los cambios de código se suben dentro de cada carpeta (backend o frontend). Luego, en la raíz, se hace un commit para actualizar la referencia del submódulo.
 
-Actualizar cambios: git pull y luego docker compose up -d --build.
+🗂️ Estructura del Proyecto
+/agenda-ucp-backend: Lógica de negocio y API (NestJS/Node).
 
-Ver logs (errores): docker compose logs -f backend.
+/agenda-ucp-frontend: Interfaz de usuario (React/Vite).
 
-Apagar el sistema: docker compose down.
+/agenda-ucp-db: Configuraciones específicas de la base de datos.
 
-⚠️ Solución de Problemas Comunes
-Error de CORS: Si el sistema carga pero el login falla, presiona Ctrl + F5 en el navegador para limpiar la caché.
+docker-compose.yml: Archivo de orquestación de contenedores.
 
-Puerto ocupado: Asegúrate de que no tengas otros servicios corriendo en los puertos 80, 4000 o 5432.
 
-Desarrollado para la UCP 🎓
+---
+
+### Por qué este README es efectivo:
+1.  **Advertencia del `--recursive`:** Es el error #1 al trabajar con submódulos. Ponerlo al principio evita frustraciones.
+2.  **Sección de `.env`:** Explica claramente que no existen por defecto y hay que crearlos, lo cual evita que el `docker-compose` falle por falta de variables.
+3.  **Comandos directos:** Tu compañero solo tiene que copiar y pegar.
+4.  **Explicación de Git:** Ayuda a entender que hay "dos niveles" de Git (la raíz y los módulos).
+
+
+
+**¿Te gustaría añadir alguna sección de contacto o requisitos específicos de hardware antes de guardarlo?**
