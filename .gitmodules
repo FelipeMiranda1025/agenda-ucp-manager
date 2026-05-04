@@ -1,0 +1,12 @@
+[submodule "agenda-ucp-db"]
+	path = agenda-ucp-db
+	url = https://github.com/FelipeMiranda1025/agenda-ucp-db.git
+[submodule "agenda-ucp-backend"]
+	path = agenda-ucp-backend
+	url = https://github.com/FelipeMiranda1025/agenda-ucp-backend.git
+[submodule "agenda-ucp-frontend"]
+	path = agenda-ucp-frontend
+	url = https://github.com/FelipeMiranda1025/agenda-ucp-frontend.git
+[submodule "ucp-agenda-frontend"]
+	path = ucp-agenda-frontend
+	url = https://github.com/FelipeMiranda1025/agenda-ucp-frontend.git

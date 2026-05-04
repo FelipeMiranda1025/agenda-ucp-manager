@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: agenda-ucp-db
+    restart: always
+    environment:
+      - POSTGRES_DB=agendadocentedb
+      - POSTGRES_PASSWORD=1089600533
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - agenda-network
+
+  backend:
+    build: ./agenda-ucp-backend
+    container_name: agenda-ucp-back
+    ports:
+      - "4000:4000"
+    env_file: ./agenda-ucp-backend/.env
+    depends_on:
+      - db
+    networks:
+      - agenda-network
+
+  frontend:
+    build: ./ucp-agenda-frontend
+    container_name: agenda-ucp-front
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - agenda-network
+
+networks:
+  agenda-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
